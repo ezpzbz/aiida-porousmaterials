@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """PorousMaterials Output Parse"""
+from __future__ import absolute_import
+
 # Importing system modules
 
 # Importing AiiDA modules
