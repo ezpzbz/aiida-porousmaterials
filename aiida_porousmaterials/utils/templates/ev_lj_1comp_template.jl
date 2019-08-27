@@ -5,13 +5,14 @@ using PorousMaterials
 PorousMaterials.set_path_to_data("$data_path")
 path = PorousMaterials.PATH_TO_DATA
 working_dir = pwd() * "/"
+mkdir(working_dir * "Output")
 
 ljff = LJForceField("$ff", cutoffradius=$cutoff, mixing_rules="$mixing")
 framework = Framework(working_dir * "$framework")
 rep_factor = replication_factors(framework.box, ljff)
 framework = replicate(framework, rep_factor)
 
-result = open("$output_filename","w")
+result = open("Output/$output_filename","w")
 
 write(result, "Ev(kJ/mol),Rv(A),x,y,z\n")
 
