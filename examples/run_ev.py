@@ -30,14 +30,8 @@ def main(codelabel, submit):
         print("The code '{}' does not exist".format(codelabel))
         sys.exit(1)
 
-    # pwd = os.path.dirname(os.path.realpath(__file__))
-    # TODO: Herein, we need to read, get_structure using ase and
-    # then save as the StructureData.
-    # framework = StructureData(file=pwd + '/test_raspa_attach_file/IRMOF1.cif')
-
-    framework = CifData(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean.cif'))
-    voronoi_nodes = SinglefileData(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean_voro_Xe_acc_S50.xyz'))
-    # frameworkname = framework.filename[:-4]
+    framework = SinglefileData(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean.cssr'))
+    voronoi_nodes = SinglefileData(file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean_voro_accessible.xyz'))
 
     parameters = Dict(dict={
         'data_path': "/storage/brno9-ceitec/home/pezhman/projects/noble_gas_epfl/xe_kr/data",
@@ -45,11 +39,10 @@ def main(codelabel, submit):
         'cutoff':12.5,
         'mixing':'Lorentz-Berthelot',
         'framework':framework.filename,
-        'frameworkname':framework.filename[:-4],
-        'accuracy':'S50',
-        'adsorbates':["Xe","Kr"],
-        'output_filename':"Ev_" + framework.filename[:-4] + ".csv",
-        'input_template' : 'ev_only_lj_template',
+        'frameworkname':framework.filename[:-5],
+        'adsorbate':"Xe",
+        'output_filename':"Ev_" + framework.filename[:-5] + ".csv",
+        'input_template' : 'ev_lj_1comp_template',
     })
 
     # resources

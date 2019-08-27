@@ -36,18 +36,12 @@ class PorousMaterialsCalculation(CalcJob):
         super(PorousMaterialsCalculation, cls).define(spec)
 
         # Input parameters
-        # TODO: I should decide to choose one or make the
-        # code flexible so both can be used on the users choice.
-        # Let's do it with Cif for now.
-        spec.input('structure', valid_type=CifData,required=True,help='Framework input file as CIF')
-        # spec.input('framework', valid_type=StructureData,required=True,
-                    # help='Framework input file as CSSR')
+        spec.input('structure', valid_type=SinglefileData,required=True,help='Framework input file as CIF')
         spec.input('forcefiled', valid_type=SinglefileData, required=False,help='forcefiled parameters as csv file')
         spec.input('voronoi_nodes', valid_type=SinglefileData, required=False,help='Voronoi nodes calculated by Zeo++')
         spec.input('parameters', valid_type=Dict, required=False,help='parameters such as cutoff and mixing rules.')
         spec.input('input_folder', valid_type=FolderData, required=False,help='Folder which contains the needed structure and other required data for running calculations.')
         spec.input('settings', valid_type=Dict, required=False, help='Additional input parameters')
-
 
         # Output parameters
         spec.output('output_parameters', valid_type=Dict, required=True, help='dictionary of calculated Voronoi energies')
