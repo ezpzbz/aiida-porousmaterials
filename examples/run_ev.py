@@ -43,6 +43,7 @@ def main(codelabel, submit):
         'adsorbate':"Xe",
         'output_filename':"Ev_" + framework.filename[:-5] + ".csv",
         'input_template' : 'ev_lj_1comp_template',
+        'ev_setting' : [99,95,90,80,50], # if not defined the default is [90,80,50]
     })
 
     # resources

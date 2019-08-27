@@ -7,6 +7,6 @@
 # For further information on the license, see the LICENSE.txt file           #
 # For further information please visit http://www.aiida.net                  #
 ##############################################################################
-"""AiiDA-PorousMaterials plugins, parsers, workflows, etc ..."""
+"""AiiDA-PorousMaterials calculation and parser plugin"""
 
 __version__ = "1.0.0a1"

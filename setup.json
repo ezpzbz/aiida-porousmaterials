@@ -20,6 +20,9 @@
     "entry_points": {
         "aiida.calculations": [
             "porousmaterials = aiida_porousmaterials.calculations:PorousMaterialsCalculation"
+        ],
+        "aiida.parsers": [
+            "porousmaterials = aiida_porousmaterials.parser:PorousMaterialsParser"
         ]
     },
     "reentry_register": true,
