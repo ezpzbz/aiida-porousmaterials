@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Basic PorousMaterials parser."""
 from __future__ import absolute_import
-import os
 import pandas as pd
+
 
 def parse_base_output(output_abs_path, ev_setting):
     """Parse Ev PorousMaterials output file"""
-    df = pd.read_csv(output_abs_path)
+    df = pd.read_csv(output_abs_path)  # pylint: disable=invalid-name
     results = {}
     results['Ev_unit'] = 'kJ/mol'
     average = df['Ev(kJ/mol)'].mean()
@@ -32,4 +32,6 @@ def parse_base_output(output_abs_path, ev_setting):
         results["number_of_Voronoi_nodes_in_p" + str(i)] = num_selected_nodes
 
     return results
+
+
 # EOF
