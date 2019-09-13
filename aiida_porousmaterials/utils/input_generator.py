@@ -27,8 +27,8 @@ class PorousMaterialsInput:
         output += ""
         params = deepcopy(self.params)
 
-        dir = os.path.dirname(os.path.abspath(__file__))
-        tmppath = '{}/templates/{}.jl'.format(dir, self.params['input_template'])
+        basepath = os.path.dirname(os.path.abspath(__file__))
+        tmppath = '{}/templates/{}.jl'.format(basepath, self.params['input_template'])
 
         with open(tmppath) as template:
             lines = template.read()
@@ -37,4 +37,6 @@ class PorousMaterialsInput:
         output += inp
 
         return output
+
+
 # EOF

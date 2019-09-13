@@ -4,13 +4,13 @@
     "author_email": "pzarabadip@gmail.com",
     "description": "AiiDA plugin for PorousMaterials code",
     "url": "https://github.com/pzarabadip/aiida-porousmaterials",
-    "license": "MIT License",
+    "license": "MIT",
     "classifiers": [
+        "Programming Language :: Python",
+        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Development Status :: 4 - Beta"
+        "Natural Language :: English",
+        "Framework :: AiiDA"
     ],
     "version": "1.0.0a1",
     "setup_requires": ["reentry"],
@@ -23,6 +23,9 @@
         ],
         "aiida.parsers": [
             "porousmaterials = aiida_porousmaterials.parser:PorousMaterialsParser"
+        ],
+        "aiida.workflows": [
+            "aiida_porousmaterials.workflows.voronoi_energy=aiida_porousmaterials.workflows.voronoi_energy:VoronoiEnergyWorkChain"
         ]
     },
     "reentry_register": true,
