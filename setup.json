@@ -25,6 +25,7 @@
             "porousmaterials = aiida_porousmaterials.parser:PorousMaterialsParser"
         ],
         "aiida.workflows": [
+            "porousmaterials.base = aiida_porousmaterials.workchains:PorousMaterialsBaseWorkChain",
             "aiida_porousmaterials.workflows.voronoi_energy=aiida_porousmaterials.workflows.voronoi_energy:VoronoiEnergyWorkChain"
         ]
     },

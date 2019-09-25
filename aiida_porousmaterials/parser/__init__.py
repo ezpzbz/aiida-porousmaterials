@@ -3,9 +3,9 @@
 from __future__ import absolute_import
 import os
 
-from aiida.orm import Dict
-from aiida.engine import ExitCode
 from aiida.common import NotExistent, OutputParsingError
+from aiida.engine import ExitCode
+from aiida.orm import Dict
 from aiida.parsers.parser import Parser
 from aiida_porousmaterials.utils import parse_base_output
 

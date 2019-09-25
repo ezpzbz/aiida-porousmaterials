@@ -16,7 +16,7 @@ result = open("Output/$output_filename","w")
 
 write(result, "Ev(kJ/mol),Rv(A),x,y,z\n")
 
-posfile = open(working_dir * "${frameworkname}_voro_accessible.xyz")
+posfile = open(working_dir * "${frameworkname}.voro_accessible")
 lines = readlines(posfile)
 n_nodes = parse(Int, lines[1])
         for k = 1:n_nodes

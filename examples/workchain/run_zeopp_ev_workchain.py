@@ -9,7 +9,7 @@ from aiida.common import NotExistent
 from aiida.orm import Code, Dict
 from aiida.plugins import DataFactory
 from aiida.engine import submit
-from aiida_porousmaterials.workflows.voronoi_energy import VoronoiEnergyWorkChain
+from aiida_porousmaterials.workchains.voronoi_energy import VoronoiEnergyWorkChain
 
 # Reading the structure and convert it to structure data.
 ParameterData = DataFactory("dict")  # pylint: disable=invalid-name
@@ -90,17 +90,18 @@ julia_options = { # pylint: disable=invalid-name
     "withmpi": False,
 }
 
-submit(VoronoiEnergyWorkChain,
-       structure=structure,
-       zeopp_code=zeopp_code,
-       julia_code=julia_code,
-       pm_parameters=pm_parameters,
-       zeopp_atomic_radii=zeopp_atomic_radii_file,
-       general_calc_params=general_calc_params,
-       zeopp_options=zeopp_options,
-       julia_options=julia_options,
-       metadata={
-           "label": "VoronoiEnergyWorkChain",
-           "description": "Test for <{}>".format(structure.label)
-       })
+submit(
+    VoronoiEnergyWorkChain,
+    structure=structure,
+    zeopp_code=zeopp_code,
+    julia_code=julia_code,
+    pm_parameters=pm_parameters,
+    zeopp_atomic_radii=zeopp_atomic_radii_file,
+    general_calc_params=general_calc_params,
+    zeopp_options=zeopp_options,
+    julia_options=julia_options,
+    metadata={
+        "label": "VoronoiEnergyWorkChain",
+        "description": "Test for <{}>".format(structure.label)
+    })
 # EOF

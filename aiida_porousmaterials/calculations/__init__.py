@@ -4,9 +4,9 @@ from __future__ import absolute_import
 import os
 import six
 
-from aiida.orm import Dict, FolderData, SinglefileData
 from aiida.common import CalcInfo, CodeInfo
 from aiida.engine import CalcJob
+from aiida.orm import Dict, FolderData, SinglefileData
 from aiida.plugins import DataFactory
 from aiida_porousmaterials.utils import PorousMaterialsInput
 
@@ -32,41 +32,38 @@ class PorousMaterialsCalculation(CalcJob):
         super(PorousMaterialsCalculation, cls).define(spec)
 
         # Input parameters
-        spec.input_namespace('structure',
-                             valid_type=SinglefileData,
-                             required=True,
-                             dynamic=True,
-                             help='Framework input file as CIF')
+        spec.input_namespace(
+            'structure', valid_type=SinglefileData, required=True, dynamic=True, help='Framework input file as CIF')
         spec.input('forcefiled', valid_type=SinglefileData, required=False, help='forcefiled parameters as csv file')
-        spec.input_namespace('all_voronoi_nodes',
-                             valid_type=SinglefileData,
-                             required=False,
-                             dynamic=True,
-                             help='All Voronoi nodes calculated by Zeo++')
-        spec.input_namespace('acc_voronoi_nodes',
-                             valid_type=SinglefileData,
-                             required=False,
-                             dynamic=True,
-                             help='Accessible Voronoi nodes calculated by Zeo++')
-        spec.input_namespace('nonacc_voronoi_nodes',
-                             valid_type=SinglefileData,
-                             required=False,
-                             dynamic=True,
-                             help='Non-accessible Voronoi nodes calculated by Zeo++')
+        spec.input_namespace(
+            'all_voronoi_nodes',
+            valid_type=SinglefileData,
+            required=False,
+            dynamic=True,
+            help='All Voronoi nodes calculated by Zeo++')
+        spec.input_namespace(
+            'acc_voronoi_nodes',
+            valid_type=SinglefileData,
+            required=False,
+            dynamic=True,
+            help='Accessible Voronoi nodes calculated by Zeo++')
+        spec.input_namespace(
+            'nonacc_voronoi_nodes',
+            valid_type=SinglefileData,
+            required=False,
+            dynamic=True,
+            help='Non-accessible Voronoi nodes calculated by Zeo++')
         spec.input('parameters', valid_type=Dict, required=False, help='parameters such as cutoff and mixing rules.')
         spec.input('settings', valid_type=Dict, required=False, help='Additional input parameters')
         spec.input('metadata.options.parser_name', valid_type=six.string_types, default=cls.DEFAULT_PARSER, non_db=True)
 
         # Output parameters
-        spec.output('output_parameters',
-                    valid_type=Dict,
-                    required=True,
-                    help='dictionary of calculated Voronoi energies')
+        spec.output(
+            'output_parameters', valid_type=Dict, required=True, help='dictionary of calculated Voronoi energies')
 
         # Exit codes
-        spec.exit_code(100,
-                       'ERROR_NO_RETRIEVED_FOLDER',
-                       message='The retrieved folder data node could not be accessed.')
+        spec.exit_code(
+            100, 'ERROR_NO_RETRIEVED_FOLDER', message='The retrieved folder data node could not be accessed.')
         spec.exit_code(101, 'ERROR_NO_OUTPUT_FILE', message='The retrieved folder does not contain an output file.')
 
         # Default output node
@@ -115,15 +112,15 @@ class PorousMaterialsCalculation(CalcJob):
 
         if 'all_voronoi_nodes' in self.inputs:
             for name, fobj in self.inputs.all_voronoi_nodes.items():
-                calcinfo.local_copy_list.append((fobj.uuid, fobj.filename, name + '_voro.xyz'))
+                calcinfo.local_copy_list.append((fobj.uuid, fobj.filename, name + '.voro'))
 
         if 'acc_voronoi_nodes' in self.inputs:
             for name, fobj in self.inputs.acc_voronoi_nodes.items():
-                calcinfo.local_copy_list.append((fobj.uuid, fobj.filename, name + '_voro_accessible.xyz'))
+                calcinfo.local_copy_list.append((fobj.uuid, fobj.filename, name + '.voro_accessible'))
 
         if 'nonacc_voronoi_nodes' in self.inputs:
             for name, fobj in self.inputs.nonacc_voronoi_nodes.items():
-                calcinfo.local_copy_list.append((fobj.uuid, fobj.filename, name + '_voro_nonaccessible.xyz'))
+                calcinfo.local_copy_list.append((fobj.uuid, fobj.filename, name + 'voro_nonaccessible'))
 
         calcinfo.retrieve_list = [self.OUTPUT_FOLDER]
 

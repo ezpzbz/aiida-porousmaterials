@@ -7,7 +7,7 @@ import sys
 import click
 
 from aiida.common import NotExistent
-from aiida.orm import Code, Dict, load_node
+from aiida.orm import Code, Dict
 from aiida.plugins import DataFactory
 from aiida.engine import run
 from aiida_porousmaterials.calculations import PorousMaterialsCalculation
@@ -30,12 +30,19 @@ def main(codelabel, submit):
         print("The code '{}' does not exist".format(codelabel))
         sys.exit(1)
 
-    framework = SinglefileData(
-        file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean.cssr'))
-    acc_voronoi_nodes = SinglefileData(
-        file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean_voro_accessible.xyz'))
-    framework = load_node(13304)
-    acc_voronoi_nodes = load_node(13292)
+    pwd = os.path.dirname(os.path.realpath(__file__))
+
+    framework = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cssr')).store()
+    # print(framework.filename)
+    acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.voro_accessible')).store()
+    # print(acc_voronoi_nodes.filename)
+
+    # framework = SinglefileData(
+    #     file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean.cssr'))
+    # acc_voronoi_nodes = SinglefileData(
+    #     file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'out.visVoro.voro_accessible'))
+    # framework = load_node(13304)
+    # acc_voronoi_nodes = load_node(13292)
 
     parameters = Dict(
         dict={
@@ -77,7 +84,7 @@ def main(codelabel, submit):
             "store_provenance": True,
         }
     }
-
+    print(inputs)
     if submit:
         run(PorousMaterialsCalculation, **inputs)
         #print(("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\

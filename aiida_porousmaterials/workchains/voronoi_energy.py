@@ -5,14 +5,14 @@ from __future__ import absolute_import
 import os
 
 from aiida.plugins import CalculationFactory, DataFactory
-from aiida.orm import Code, Dict
+from aiida.orm import Code, Dict, SinglefileData
 from aiida.engine import submit  # pylint: disable=unused-import
 from aiida.engine import ToContext, WorkChain, if_
 
 CifData = DataFactory("cif")  # pylint: disable=invalid-name
 ParameterData = DataFactory("dict")  # pylint: disable=invalid-name
-SinglefileData = DataFactory("singlefile")  # pylint: disable=invalid-name
-FolderData = DataFactory('folder')  # pylint: disable=invalid-name
+# SinglefileData = DataFactory("singlefile")  # pylint: disable=invalid-name
+# FolderData = DataFactory('folder')  # pylint: disable=invalid-name
 ZeoppCalculation = CalculationFactory("zeopp.network")  # pylint: disable=invalid-name
 PorousMaterialsCalculation = CalculationFactory("porousmaterials")  # pylint: disable=invalid-name
 NetworkParameters = DataFactory("zeopp.parameters")  # pylint: disable=invalid-name
