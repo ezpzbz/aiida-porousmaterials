@@ -5,7 +5,7 @@ import os
 
 from aiida.common import NotExistent, OutputParsingError
 from aiida.engine import ExitCode
-from aiida.orm import Dict
+from aiida.orm import Dict, SinglefileData
 from aiida.parsers.parser import Parser
 from aiida_porousmaterials.utils import parse_base_output
 
@@ -36,14 +36,8 @@ class PorousMaterialsParser(Parser):
             output_folder._repository._get_base_folder().abspath,  # pylint: disable=protected-access
             self.node.process_class.OUTPUT_FOLDER,
             fname)
-
-        if 'ev_setting' in self.node.inputs.parameters.get_dict():
-            ev_setting = self.node.inputs.parameters['ev_setting']
-        else:
-            ev_setting = [90, 80, 50]
-
-        output_parameters = parse_base_output(output_abs_path, ev_setting)
-
+        output_parameters = parse_base_output(output_abs_path)
+        self.out("ev_output_file", SinglefileData(file=output_abs_path))
         self.out("output_parameters", Dict(dict=output_parameters))
 
         return ExitCode(0)
