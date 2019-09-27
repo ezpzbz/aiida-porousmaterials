@@ -84,7 +84,6 @@ def main(codelabel, submit):
             "store_provenance": True,
         }
     }
-    print(inputs)
     if submit:
         run(PorousMaterialsCalculation, **inputs)
         #print(("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\

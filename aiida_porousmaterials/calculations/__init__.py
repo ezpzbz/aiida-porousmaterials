@@ -58,9 +58,10 @@ class PorousMaterialsCalculation(CalcJob):
         spec.input('metadata.options.parser_name', valid_type=six.string_types, default=cls.DEFAULT_PARSER, non_db=True)
 
         # Output parameters
+        spec.outputs.dynamic = True
         spec.output(
             'output_parameters', valid_type=Dict, required=True, help='dictionary of calculated Voronoi energies')
-
+        spec.output('ev_output_file', valid_type=SinglefileData, required=False)
         # Exit codes
         spec.exit_code(
             100, 'ERROR_NO_RETRIEVED_FOLDER', message='The retrieved folder data node could not be accessed.')
