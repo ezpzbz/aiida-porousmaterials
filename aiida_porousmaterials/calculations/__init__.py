@@ -33,26 +33,30 @@ class PorousMaterialsCalculation(CalcJob):
 
         # Input parameters
         spec.input_namespace(
-            'structure', valid_type=SinglefileData, required=True, dynamic=True, help='Framework input file as CIF')
+            'structure', valid_type=SinglefileData, required=True, dynamic=True, help='Framework input file as CIF'
+        )
         spec.input('forcefiled', valid_type=SinglefileData, required=False, help='forcefiled parameters as csv file')
         spec.input_namespace(
             'all_voronoi_nodes',
             valid_type=SinglefileData,
             required=False,
             dynamic=True,
-            help='All Voronoi nodes calculated by Zeo++')
+            help='All Voronoi nodes calculated by Zeo++'
+        )
         spec.input_namespace(
             'acc_voronoi_nodes',
             valid_type=SinglefileData,
             required=False,
             dynamic=True,
-            help='Accessible Voronoi nodes calculated by Zeo++')
+            help='Accessible Voronoi nodes calculated by Zeo++'
+        )
         spec.input_namespace(
             'nonacc_voronoi_nodes',
             valid_type=SinglefileData,
             required=False,
             dynamic=True,
-            help='Non-accessible Voronoi nodes calculated by Zeo++')
+            help='Non-accessible Voronoi nodes calculated by Zeo++'
+        )
         spec.input('parameters', valid_type=Dict, required=False, help='parameters such as cutoff and mixing rules.')
         spec.input('settings', valid_type=Dict, required=False, help='Additional input parameters')
         spec.input('metadata.options.parser_name', valid_type=six.string_types, default=cls.DEFAULT_PARSER, non_db=True)
@@ -60,11 +64,13 @@ class PorousMaterialsCalculation(CalcJob):
         # Output parameters
         spec.outputs.dynamic = True
         spec.output(
-            'output_parameters', valid_type=Dict, required=True, help='dictionary of calculated Voronoi energies')
+            'output_parameters', valid_type=Dict, required=True, help='dictionary of calculated Voronoi energies'
+        )
         spec.output('ev_output_file', valid_type=SinglefileData, required=False)
         # Exit codes
         spec.exit_code(
-            100, 'ERROR_NO_RETRIEVED_FOLDER', message='The retrieved folder data node could not be accessed.')
+            100, 'ERROR_NO_RETRIEVED_FOLDER', message='The retrieved folder data node could not be accessed.'
+        )
         spec.exit_code(101, 'ERROR_NO_OUTPUT_FILE', message='The retrieved folder does not contain an output file.')
 
         # Default output node

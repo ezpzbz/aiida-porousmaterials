@@ -22,6 +22,7 @@ def extract_wrap_results(**kwargs):
     It gets all generated output_parameters from workchain,
     process them, and wrap them in a single Dict object!
     """
+    # pylint: disable=too-many-locals
     results = {}
     # ZeoppCalculation Section
     results['zeopp'] = {}
@@ -37,24 +38,38 @@ def extract_wrap_results(**kwargs):
     # PorousMaterials Secion!
     if 'pm_ev' in kwargs.keys():
         import pandas as pd
+        # temperature = 298.0
+        K_to_kJ_mol = 1.0 / 120.273  # pylint: disable=invalid-name
+        R = 8.3144598  # pylint: disable=invalid-name
+
         ev_setting = kwargs['ev_setting']
         results['porousmaterials'] = {}
         results["porousmaterials"] = kwargs['pm_out'].get_dict()
+        density = kwargs['pm_out'].get_dict()['density']
+        temperature = kwargs['pm_out'].get_dict()['temperature']
         fname = kwargs['pm_ev'].filename
         output_abs_path = os.path.join(
             kwargs['pm_ev']._repository._get_base_folder().abspath,  # pylint: disable=protected-access
-            fname)
-        df = pd.read_csv(output_abs_path)  # pylint: disable=invalid-name
-        minimum = df['Ev(kJ/mol)'].min()
-        average = df['Ev(kJ/mol)'].mean()
+            fname
+        )
+        df = pd.read_csv(output_abs_path, skiprows=5)  # pylint: disable=invalid-name
+        n_nodes = df.shape[0]
+        minimum = df.Ev_K.min()
+        average = df.Ev_K.mean() * K_to_kJ_mol
+        boltzmann_factor_sum = df.boltzmann_factor.sum()
+        wtd_energy_sum = df.weighted_energy_K.sum()
+        adsorption_energy = (wtd_energy_sum / boltzmann_factor_sum) * K_to_kJ_mol
+        Kh = boltzmann_factor_sum / (R * temperature * n_nodes * density * 100000.0)  # pylint: disable=invalid-name
         results['porousmaterials']['Ev_average'] = average
         for percentile in ev_setting:
             threshold = (percentile / 100) * minimum
-            df_selected = df[df['Ev(kJ/mol)'] <= threshold]
+            df_selected = df[df['Ev_K'] <= threshold]
             num_selected_nodes = df_selected.shape[0]
-            percentile_average = df_selected.mean()['Ev(kJ/mol)']
+            percentile_average = df_selected.mean()['Ev_K'] * K_to_kJ_mol
             results['porousmaterials']["Ev_p" + str(percentile)] = percentile_average
             results['porousmaterials']["number_of_Voronoi_nodes_in_p" + str(percentile)] = num_selected_nodes
+        results['porousmaterials']["Eads_average"] = adsorption_energy
+        results['porousmaterials']["Kh"] = Kh
 
     return Dict(dict=results)
 
@@ -81,18 +96,19 @@ class VoronoiEnergyWorkChain(WorkChain):
 
         # PorousMaterialsCalculation
         spec.expose_inputs(
-            PorousMaterialsBaseWorkChain, namespace='porousmaterials_base', exclude=['porousmaterials.structure'])
+            PorousMaterialsBaseWorkChain, namespace='porousmaterials_base', exclude=['porousmaterials.structure']
+        )
 
         # VoronoiEnergyWorkChain specific inputs!
         spec.input("structure", valid_type=CifData, required=True, help="Input structure in cif format")
-        spec.input("parameters", valid_type=Dict, required=False, help="Parameters to do the logic in workchain")
+        spec.input("parameters", valid_type=Dict, required=True, help="Parameters to do the logic in workchain")
 
         # Workflow
         spec.outline(
             cls.setup,
             cls.run_zeopp_res,
-            if_(cls.should_run_zeopp_visvoro)(if_(cls.should_reperform_zeopp_res)(cls.run_zeopp_res),
-                                              cls.run_zeopp_visvoro),
+            if_(cls.should_run_zeopp_visvoro
+               )(if_(cls.should_reperform_zeopp_res)(cls.run_zeopp_res), cls.run_zeopp_visvoro),
             if_(cls.should_run_ev)(cls.run_ev),
             cls.return_results,
         )
@@ -233,10 +249,10 @@ class VoronoiEnergyWorkChain(WorkChain):
         pm_input = AttributeDict(self.exposed_inputs(PorousMaterialsBaseWorkChain, 'porousmaterials_base'))
         pm_input['porousmaterials']['structure'] = {}
         pm_input['porousmaterials']['acc_voronoi_nodes'] = {}
-        pm_input['porousmaterials']['structure'][
-            self.inputs.structure.filename[:-4]] = self.ctx.zeopp_res.outputs.structure_cssr
-        pm_input['porousmaterials']['acc_voronoi_nodes'][
-            self.inputs.structure.filename[:-4]] = self.ctx.zeopp_visvoro.outputs.voro_accessible
+        pm_input['porousmaterials']['structure'][self.inputs.structure.filename[:-4]
+                                                ] = self.ctx.zeopp_res.outputs.structure_cssr
+        pm_input['porousmaterials']['acc_voronoi_nodes'][self.inputs.structure.filename[:-4]
+                                                        ] = self.ctx.zeopp_visvoro.outputs.voro_accessible
 
         pm_ev = self.submit(PorousMaterialsBaseWorkChain, **pm_input)  # pylint: disable=invalid-name
         self.report("pk: <{}> | Running Voronoi Energy Calculation".format(pm_ev.pk))
@@ -267,7 +283,6 @@ class VoronoiEnergyWorkChain(WorkChain):
                 all_outputs['ev_setting'] = List(list=self.ctx.parameters['ev_setting'])
             else:
                 all_outputs['ev_setting'] = List(list=[90, 80, 50])
-
         output_parameters = extract_wrap_results(**all_outputs)
 
         self.out('structure_cssr', self.ctx.zeopp_res.outputs.structure_cssr)

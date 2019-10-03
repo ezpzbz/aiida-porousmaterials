@@ -103,5 +103,6 @@ submit(
     metadata={
         "label": "VoronoiEnergyWorkChain",
         "description": "Test for <{}>".format(structure.label)
-    })
+    }
+)
 # EOF

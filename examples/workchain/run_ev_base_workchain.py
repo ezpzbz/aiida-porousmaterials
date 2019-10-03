@@ -33,11 +33,12 @@ def main(codelabel):
 
     pwd = os.path.dirname(os.path.realpath(__file__))
 
-    framework = SinglefileData(
-        file=os.path.join(pwd, '..', 'simple_calculations', 'files', 'FIQCEN_clean.cssr')).store()
+    framework = SinglefileData(file=os.path.join(pwd, '..', 'simple_calculations', 'files', 'FIQCEN_clean.cssr')
+                              ).store()
     # print(framework.filename)
     acc_voronoi_nodes = SinglefileData(
-        file=os.path.join(pwd, '..', 'simple_calculations', 'files', 'FIQCEN_clean.voro_accessible')).store()
+        file=os.path.join(pwd, '..', 'simple_calculations', 'files', 'FIQCEN_clean.voro_accessible')
+    ).store()
     # print(acc_voronoi_nodes.filename)
 
     # framework = SinglefileData(
@@ -59,7 +60,8 @@ def main(codelabel):
             'output_filename': "Ev_" + framework.filename[:-5] + ".csv",
             'input_template': 'ev_lj_1comp_template',
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
-        })
+        }
+    )
 
     # resources
     options = {

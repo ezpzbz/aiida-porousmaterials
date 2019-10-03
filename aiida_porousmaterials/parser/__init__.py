@@ -35,7 +35,8 @@ class PorousMaterialsParser(Parser):
         output_abs_path = os.path.join(
             output_folder._repository._get_base_folder().abspath,  # pylint: disable=protected-access
             self.node.process_class.OUTPUT_FOLDER,
-            fname)
+            fname
+        )
         output_parameters = parse_base_output(output_abs_path)
         self.out("ev_output_file", SinglefileData(file=output_abs_path))
         self.out("output_parameters", Dict(dict=output_parameters))

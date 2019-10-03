@@ -47,8 +47,8 @@ wc_params = Dict( # pylint: disable=invalid-name
         "lcd_max": 15.0,
         "visvoro_ha": False,
         "visvoro_accuracy": "DEF",
-        "accuracy_high": "DEF",
-        "probe_radius": 1.98,
+        "accuracy_high": "S100",
+        "probe_radius": 1.985,
         "pld_based": False,
         'ev_setting': [99, 95, 90, 80, 50],
     })
@@ -62,8 +62,9 @@ pm_parameters = Dict( # pylint: disable=invalid-name
         'framework': structure.filename[:-4] + '.cssr',
         'frameworkname': structure.filename[:-4],
         'adsorbate': "Xe",
+        'temperature':298.0,
         'output_filename': "Ev_" + structure.filename[:-4] + ".csv",
-        'input_template': 'ev_lj_1comp_template',
+        'input_template': 'ev_lj_kh_1comp_template',
     })
 
 zeopp_options = { # pylint: disable=invalid-name
@@ -106,5 +107,6 @@ inputs = {  # pylint: disable=invalid-name
 }
 
 submit(VoronoiEnergyWorkChain, **inputs)
+#run(VoronoiEnergyWorkChain, **inputs)
 
 # EOF

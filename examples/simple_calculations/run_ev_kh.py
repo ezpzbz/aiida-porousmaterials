@@ -55,7 +55,7 @@ def main(codelabel, submit):
             'adsorbate': "Xe",
             'temperature': 298.0,
             'output_filename': "Ev_" + framework.filename[:-5] + ".csv",
-            'input_template': 'ev_lj_1comp_template',
+            'input_template': 'ev_lj_kh_1comp_template',
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
