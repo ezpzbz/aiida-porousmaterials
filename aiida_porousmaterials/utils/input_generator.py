@@ -35,7 +35,6 @@ class PorousMaterialsInput:
 
         inp = Template(lines).substitute(params)
         output += inp
-
         return output
 
 

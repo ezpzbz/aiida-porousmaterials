@@ -12,7 +12,6 @@ from aiida.engine import submit
 from aiida_porousmaterials.workchains.voronoi_energy import VoronoiEnergyWorkChain
 
 # Reading the structure and convert it to structure data.
-ParameterData = DataFactory("dict")  # pylint: disable=invalid-name
 SinglefileData = DataFactory('singlefile')  # pylint: disable=invalid-name
 CifData = DataFactory('cif')  # pylint: disable=invalid-name
 
@@ -41,14 +40,21 @@ except NotExistent:
 
 zeopp_atomic_radii_file = SinglefileData(file=os.path.abspath("./UFF.rad"))  # pylint: disable=invalid-name
 
-wc_params = Dict( # pylint: disable=invalid-name
+components = Dict(dict={  # pylint: disable=invalid-name
+    "Xe": {
+        "probe_radius": 1.985
+    },
+    "Kr": {
+        "probe_radius": 1.82
+    },
+})
+
+wc_parameters = Dict( # pylint: disable=invalid-name
     dict={
         "pld_min": 3.90,
         "lcd_max": 15.0,
-        "visvoro_ha": False,
         "visvoro_accuracy": "DEF",
-        "accuracy_high": "S100",
-        "probe_radius": 1.985,
+        "pld_accuracy": "DEF",
         "pld_based": False,
         'ev_setting': [99, 95, 90, 80, 50],
     })
@@ -59,54 +65,40 @@ pm_parameters = Dict( # pylint: disable=invalid-name
         'ff': 'UFF.csv',
         'cutoff': 12.5,
         'mixing': 'Lorentz-Berthelot',
-        'framework': structure.filename[:-4] + '.cssr',
+        'framework': structure.filename,
         'frameworkname': structure.filename[:-4],
-        'adsorbate': "Xe",
+        'adsorbates': '["Xe","Kr"]',
         'temperature':298.0,
-        'output_filename': "Ev_" + structure.filename[:-4] + ".csv",
-        'input_template': 'ev_lj_kh_1comp_template',
+        'input_template': 'ev_vdw_kh_multicomp_template',
     })
 
-zeopp_options = { # pylint: disable=invalid-name
-    "resources": {
-        "num_machines": 1,
-        "tot_num_mpiprocs": 1,
-    },
-    "max_wallclock_seconds": 1 * 30 * 60,
-    "withmpi": False,
+# Constructing builder
+builder = VoronoiEnergyWorkChain.get_builder()  # pylint: disable=invalid-name
+# VoronoiEnergyWorkChain inputs
+builder.structure = structure
+builder.parameters = wc_parameters
+builder.components = components
+builder.metadata.label = "HKUST-1"  #pylint: disable = no-member
+builder.metadata.description = "Test VoronoiEnergyWorkChain with HKUST1"  #pylint: disable = no-member
+# PorousMaterials inputs
+builder.porousmaterials.code = julia_code  #pylint: disable = no-member
+builder.porousmaterials.parameters = pm_parameters  #pylint: disable = no-member
+builder.porousmaterials.metadata.options.resources = { #pylint: disable = no-member
+    "num_machines": 1,
+    "tot_num_mpiprocs": 1,
 }
-
-julia_options = { # pylint: disable=invalid-name
-    "resources": {
-        "num_machines": 1,
-        "tot_num_mpiprocs": 1,
-    },
-    "max_wallclock_seconds": 2 * 60 * 60,
-    "withmpi": False,
+builder.porousmaterials.metadata.options.max_wallclock_seconds = 1 * 10 * 60  #pylint: disable = no-member
+builder.porousmaterials.metadata.options.withmpi = False  #pylint: disable = no-member
+# Zeopp inputs
+builder.zeopp.code = zeopp_code  #pylint: disable = no-member
+builder.zeopp.atomic_radii = zeopp_atomic_radii_file  #pylint: disable = no-member
+builder.zeopp.metadata.options.resources = {  #pylint: disable = no-member
+    "num_machines": 1,
+    "tot_num_mpiprocs": 1,
 }
+builder.zeopp.metadata.options.max_wallclock_seconds = 1 * 30 * 60  #pylint: disable = no-member
+builder.zeopp.metadata.options.withmpi = False  #pylint: disable = no-member
 
-inputs = {  # pylint: disable=invalid-name
-    'structure': structure,
-    'parameters': wc_params,
-    'porousmaterials_base': {
-        'porousmaterials': {
-            'code': julia_code,
-            'parameters': pm_parameters,
-            'metadata': {
-                'options': julia_options,
-            }
-        }
-    },
-    'zeopp': {
-        'code': zeopp_code,
-        'atomic_radii': zeopp_atomic_radii_file,
-        'metadata': {
-            'options': zeopp_options,
-        }
-    }
-}
-
-submit(VoronoiEnergyWorkChain, **inputs)
-#run(VoronoiEnergyWorkChain, **inputs)
+submit(builder)
 
 # EOF

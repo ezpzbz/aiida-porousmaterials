@@ -22,7 +22,8 @@ CifData = DataFactory('cif')  # pylint: disable=invalid-name
 @click.argument('codelabel')
 @click.option('--submit', is_flag=True, help='If true, actually submits the clac to the daemon.')
 def main(codelabel, submit):
-    """hhghghghg
+    """
+    Example to run Sinlge Component
     """
     try:
         code = Code.get_from_string(codelabel)
@@ -31,18 +32,8 @@ def main(codelabel, submit):
         sys.exit(1)
 
     pwd = os.path.dirname(os.path.realpath(__file__))
-
-    framework = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cssr')).store()
-    # print(framework.filename)
+    framework = CifData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cif')).store()
     acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.voro_accessible')).store()
-    # print(acc_voronoi_nodes.filename)
-
-    # framework = SinglefileData(
-    #     file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'FIQCEN_clean.cssr'))
-    # acc_voronoi_nodes = SinglefileData(
-    #     file=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files', 'out.visVoro.voro_accessible'))
-    # framework = load_node(13304)
-    # acc_voronoi_nodes = load_node(13292)
 
     parameters = Dict(
         dict={
@@ -51,49 +42,33 @@ def main(codelabel, submit):
             'cutoff': 12.5,
             'mixing': 'Lorentz-Berthelot',
             'framework': framework.filename,
-            'frameworkname': framework.filename[:-5],
+            'frameworkname': framework.filename[:-4],
             'adsorbate': "Xe",
             'temperature': 298.0,
-            'output_filename': "Ev_" + framework.filename[:-5] + ".csv",
-            'input_template': 'ev_lj_1comp_template',
+            'output_filename': "Ev_" + framework.filename[:-4] + ".csv",
+            'input_template': 'ev_vdw_1comp_template',
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
 
-    # resources
-    options = {
-        "resources": {
-            "num_machines": 1,
-            "num_mpiprocs_per_machine": 1,
-        },
-        "max_wallclock_seconds": 1 * 30 * 60,  # 30 min
-        "withmpi": False,
+    builder = PorousMaterialsCalculation.get_builder()
+    builder.structure = {framework.filename[:-4]: framework}
+    builder.parameters = parameters
+    builder.acc_voronoi_nodes = {framework.filename[:-4]: acc_voronoi_nodes}
+    builder.code = code
+    builder.metadata.options.resources = { #pylint: disable = no-member
+        "num_machines": 1,
+        "num_mpiprocs_per_machine": 1,
     }
+    builder.metadata.options.max_wallclock_seconds = 1 * 30 * 60  #pylint: disable = no-member
+    builder.metadata.options.withmpi = False  #pylint: disable = no-member
 
-    # collecting all the inputs
-    inputs = {
-        "structure": {
-            framework.filename[:-5]: framework
-        },
-        "parameters": parameters,
-        "acc_voronoi_nodes": {
-            framework.filename[:-5]: acc_voronoi_nodes
-        },
-        "code": code,
-        "metadata": {
-            "options": options,
-            "dry_run": False,
-            "store_provenance": True,
-        }
-    }
     if submit:
-        run(PorousMaterialsCalculation, **inputs)
-        #print(("submitted calculation; calc=Calculation(uuid='{}') # ID={}"\
-        #        .format(calc.uuid,calc.dbnode.pk)))
+        run(builder)
     else:
-        inputs["metadata"]["dry_run"] = True
-        inputs["metadata"]["store_provenance"] = False
-        run(PorousMaterialsCalculation, **inputs)
+        builder.metadata.dry_run = True  #pylint: disable = no-member
+        builder.metadata.store_provenance = False  #pylint: disable = no-member
+        run(builder)
         print("submission test successful")
         print("In order to actually submit, add '--submit'")
 
