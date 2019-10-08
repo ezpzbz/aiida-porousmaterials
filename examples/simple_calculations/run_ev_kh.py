@@ -22,8 +22,7 @@ CifData = DataFactory('cif')  # pylint: disable=invalid-name
 @click.argument('codelabel')
 @click.option('--submit', is_flag=True, help='If true, actually submits the clac to the daemon.')
 def main(codelabel, submit):
-    """
-    Example to run Sinlge Component
+    """hhghghghg
     """
     try:
         code = Code.get_from_string(codelabel)
@@ -32,7 +31,9 @@ def main(codelabel, submit):
         sys.exit(1)
 
     pwd = os.path.dirname(os.path.realpath(__file__))
-    framework = CifData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cif')).store()
+
+    framework = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cif')).store()
+
     acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.voro_accessible')).store()
 
     parameters = Dict(
@@ -46,7 +47,7 @@ def main(codelabel, submit):
             'adsorbate': "Xe",
             'temperature': 298.0,
             'output_filename': "Ev_" + framework.filename[:-4] + ".csv",
-            'input_template': 'ev_vdw_1comp_template',
+            'input_template': 'ev_vdw_kh_1comp_template',
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
@@ -75,5 +76,4 @@ def main(codelabel, submit):
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
-
-    # EOF
+# EOF

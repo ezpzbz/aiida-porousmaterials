@@ -22,8 +22,7 @@ CifData = DataFactory('cif')  # pylint: disable=invalid-name
 @click.argument('codelabel')
 @click.option('--submit', is_flag=True, help='If true, actually submits the clac to the daemon.')
 def main(codelabel, submit):
-    """
-    Example to run Sinlge Component
+    """hhghghghg
     """
     try:
         code = Code.get_from_string(codelabel)
@@ -32,8 +31,13 @@ def main(codelabel, submit):
         sys.exit(1)
 
     pwd = os.path.dirname(os.path.realpath(__file__))
-    framework = CifData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cif')).store()
-    acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.voro_accessible')).store()
+
+    framework = CifData(file=os.path.join(pwd, 'files', 'HKUST1.cif')).store()
+
+    acc_voronoi_nodes_xe = SinglefileData(file=os.path.join(pwd, 'files', 'xenon_voro', 'HKUST1.voro_accessible')
+                                         ).store()
+    acc_voronoi_nodes_kr = SinglefileData(file=os.path.join(pwd, 'files', 'krypton_voro', 'HKUST1.voro_accessible')
+                                         ).store()
 
     parameters = Dict(
         dict={
@@ -43,18 +47,22 @@ def main(codelabel, submit):
             'mixing': 'Lorentz-Berthelot',
             'framework': framework.filename,
             'frameworkname': framework.filename[:-4],
-            'adsorbate': "Xe",
+            'adsorbates': '["Xe","Kr"]',
             'temperature': 298.0,
-            'output_filename': "Ev_" + framework.filename[:-4] + ".csv",
-            'input_template': 'ev_vdw_1comp_template',
+            'input_template': 'ev_vdw_kh_multicomp_template',
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
+    voro_label_xe = framework.filename[:-4] + "_Xe"
+    voro_label_kr = framework.filename[:-4] + "_Kr"
 
     builder = PorousMaterialsCalculation.get_builder()
     builder.structure = {framework.filename[:-4]: framework}
     builder.parameters = parameters
-    builder.acc_voronoi_nodes = {framework.filename[:-4]: acc_voronoi_nodes}
+    builder.acc_voronoi_nodes = {
+        voro_label_xe: acc_voronoi_nodes_xe,
+        voro_label_kr: acc_voronoi_nodes_kr,
+    }
     builder.code = code
     builder.metadata.options.resources = { #pylint: disable = no-member
         "num_machines": 1,
@@ -75,5 +83,4 @@ def main(codelabel, submit):
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter
-
-    # EOF
+# EOF
