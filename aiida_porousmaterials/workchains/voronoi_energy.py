@@ -5,7 +5,7 @@ from __future__ import absolute_import
 import os
 
 from aiida.plugins import CalculationFactory, DataFactory
-from aiida.orm import Dict, Float, List
+from aiida.orm import Dict, List, Str
 from aiida.engine import calcfunction, if_, ToContext, WorkChain
 
 ZeoppCalculation = CalculationFactory("zeopp.network")  # pylint: disable=invalid-name
@@ -28,14 +28,16 @@ def update_components(inp_components, zeopp_res_output):
 def modify_zeopp_parameters(param, **kwargs):
     """Modifying the NetworkParameters to keep the provenance."""
     for key in kwargs.keys():  # pylint: disable=consider-iterating-dictionary
-        if key in ['zeopp_res', 'zeopp_visvoro', 'probe_radius']:
+        if key in ['zeopp_res', 'zeopp_visvoro', 'probe', 'components']:
             if key == 'zeopp_res':
                 params = kwargs[key].get_dict()
                 updated_params = {"res": True, "ha": param['pld_accuracy']}
                 params.update(updated_params)
             if key == 'zeopp_visvoro':
                 params = kwargs[key].get_dict()
-                updated_params = {"visVoro": kwargs['probe_radius'].value, "ha": param['visvoro_accuracy']}
+                probe_radius = kwargs['components'].get_dict()[kwargs['probe'].value]['probe_radius']
+                del params["res"]
+                updated_params = {"visVoro": probe_radius, "ha": param['visvoro_accuracy']}
                 params.update(updated_params)
         else:
             raise AttributeError("The modification protocol is not supported!")
@@ -164,7 +166,7 @@ class VoronoiEnergyWorkChain(WorkChain):
         zeopp_input['parameters'] = modify_zeopp_parameters(self.ctx.parameters, **self.ctx.zeopp_param)
 
         res = self.submit(ZeoppCalculation, **zeopp_input)
-        self.report("pk: <{}> | Submitted Zeo++ Pore Diameter Calculation".format(res.id))
+        self.report("pk: <{}> | Submitted Zeo++ Pore Diameter Calculation".format(res.pk))
         return ToContext(zeopp_res=res)
 
     def should_run_zeopp_visvoro(self):
@@ -199,7 +201,8 @@ class VoronoiEnergyWorkChain(WorkChain):
         # All together submission!
         for key in self.ctx.components.keys():
             self.ctx.zeopp_param['zeopp_visvoro'] = self.ctx.default_zeopp_params
-            self.ctx.zeopp_param['probe_radius'] = Float(self.ctx.components.get_dict()[key]['probe_radius'])
+            self.ctx.zeopp_param['probe'] = Str(key)
+            self.ctx.zeopp_param['components'] = self.ctx.components
             zeopp_input['parameters'] = modify_zeopp_parameters(self.ctx.parameters, **self.ctx.zeopp_param)
             zeopp_input['metadata']['call_link_label'] = 'run_zeopp_visvoro_' + key
             visvoro = self.submit(ZeoppCalculation, **zeopp_input)
