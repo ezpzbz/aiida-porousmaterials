@@ -15,14 +15,14 @@ framework = replicate(framework, rep_factor)
 density = crystal_density(framework)
 
 for adsorbate in $adsorbates
-    result = open("Output/Ev_vdw_${frameworkname}_"*adsorbate*"_"*adsorbate*".csv","w")
+    result = open("Output/Ev_vdw_${frameworkname}_PLD_"*adsorbate*".csv","w")
     write(result,"!!!Generated results using aiida-porousmaterials plugin!!!\n")
     write(result,"Framework Density\n")
     write(result,string(density),"\n")
     write(result,"Temperature(K)\n")
     write(result,string(temperature),"\n")
     write(result, "Ev_K,boltzmann_factor,weighted_energy_K,Rv_A,x,y,z,adsorbate\n")
-    posfile = open(working_dir * "${frameworkname}_"*adsorbate*".voro_accessible")
+    posfile = open(working_dir * "${frameworkname}_PLD.voro_accessible")
     lines = readlines(posfile)
     n_nodes = parse(Int, lines[1])
     for k = 1:n_nodes

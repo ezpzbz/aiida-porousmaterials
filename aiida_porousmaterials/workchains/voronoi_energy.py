@@ -19,7 +19,7 @@ NetworkParameters = DataFactory("zeopp.parameters")  # pylint: disable=invalid-n
 def update_components(inp_components, zeopp_res_output):
     """ Updating component Dictionary"""
     components = inp_components.get_dict()
-    probe_radius = zeopp_res_output.get_dict()["Largest_free_sphere"] / 2
+    probe_radius = (zeopp_res_output.get_dict()["Largest_free_sphere"] / 2) * 0.95
     components['PLD'] = {'probe_radius': probe_radius}
     return Dict(dict=components)
 
@@ -43,6 +43,13 @@ def modify_zeopp_parameters(param, **kwargs):
             raise AttributeError("The modification protocol is not supported!")
 
     return NetworkParameters(dict=params)
+
+
+@calcfunction
+def modify_pm_parameters(pm_parameters, input_template):
+    params = pm_parameters.get_dict()
+    params['input_template'] = input_template.value
+    return Dict(dict=params)
 
 
 @calcfunction
@@ -138,8 +145,8 @@ class VoronoiEnergyWorkChain(WorkChain):
                 cls.run_zeopp_visvoro,
                 cls.inspect_zeopp_visvoro,
                 if_(cls.should_run_pm)(cls.run_pm,),
-                cls.return_results,
             ),
+            cls.return_results,
         )
         # Dyanmic output!
         spec.outputs.dynamic = True
@@ -152,6 +159,9 @@ class VoronoiEnergyWorkChain(WorkChain):
         self.ctx.label = self.inputs.structure.filename[:-4]
         self.ctx.default_zeopp_params = NetworkParameters(dict={"res": True, "ha": "DEF"})
         self.ctx.zeopp_param = {}
+        self.ctx.should_run_comp = [False]
+        self.ctx.should_run_pld = [False]
+        self.ctx.number_acc_voronoi_nodes = {}
 
     def run_zeopp_res(self):
         """
@@ -224,8 +234,6 @@ class VoronoiEnergyWorkChain(WorkChain):
         """
         self.ctx.should_run_comp = []
         self.ctx.should_run_pld = []
-        self.ctx.number_acc_voronoi_nodes = {}
-
         for key in self.ctx.components.keys():
             zeopp_label = "zeopp_{}".format(key)
             visvoro_dir = self.ctx[zeopp_label].outputs.retrieved._repository._get_base_folder().abspath  # pylint: disable=protected-access
@@ -260,10 +268,31 @@ class VoronoiEnergyWorkChain(WorkChain):
         pm_input['metadata']['label'] = 'Voronoi Energy Calculation'
         pm_input['metadata']['call_link_label'] = 'run_pm'
 
-        for key in self.ctx.components.keys():
-            zeopp_label = "zeopp_{}".format(key)
-            voro_label = "{}_{}".format(self.ctx.label, key)
-            pm_input['acc_voronoi_nodes'][voro_label] = self.ctx[zeopp_label].outputs.voro_accessible
+        if all(self.ctx.should_run_comp) and all(self.ctx.should_run_pld):
+            for key in self.ctx.components.keys():
+                zeopp_label = "zeopp_{}".format(key)
+                voro_label = "{}_{}".format(self.ctx.label, key)
+                pm_input['acc_voronoi_nodes'][voro_label] = self.ctx[zeopp_label].outputs.voro_accessible
+                pm_input["parameters"] = modify_pm_parameters(
+                    self.inputs.porousmaterials.parameters, Str('ev_vdw_kh_multicomp_pld_template')
+                )
+
+        if all(self.ctx.should_run_comp) and not all(self.ctx.should_run_pld):
+            for key in self.inputs.components.keys():
+                zeopp_label = "zeopp_{}".format(key)
+                voro_label = "{}_{}".format(self.ctx.label, key)
+                pm_input['acc_voronoi_nodes'][voro_label] = self.ctx[zeopp_label].outputs.voro_accessible
+                pm_input["parameters"] = modify_pm_parameters(
+                    self.inputs.porousmaterials.parameters, Str('ev_vdw_kh_multicomp_template')
+                )
+
+        if not all(self.ctx.should_run_comp) and all(self.ctx.should_run_pld):
+            voro_label = "{}_{}".format(self.ctx.label, 'PLD')
+            pm_input['acc_voronoi_nodes'][voro_label] = self.ctx["zeopp_PLD"].outputs.voro_accessible
+            pm_input["parameters"] = modify_pm_parameters(
+                self.inputs.porousmaterials.parameters, Str('ev_vdw_kh_pld_template')
+            )
+
         pm_ev = self.submit(PorousMaterialsCalculation, **pm_input)  # pylint: disable=invalid-name
         self.report("pk: <{}> | Running Voronoi Energy Calculation".format(pm_ev.pk))
         return ToContext(pm_ev=pm_ev)
@@ -278,12 +307,13 @@ class VoronoiEnergyWorkChain(WorkChain):
         # ZeoppCalculation Section
         all_outputs['zeopp_res'] = self.ctx.zeopp_res.outputs.output_parameters
 
-        for key in self.ctx.components.keys():
-            zeopp_label = "zeopp_{}".format(key)
-            if all(self.ctx.should_run_visvoro):
-                if 'voro_accessible' in self.ctx[zeopp_label].outputs:
-                    voro_accessible[key] = self.ctx[zeopp_label].outputs.voro_accessible
-        self.out('voro_accessible', voro_accessible)
+        if all(self.ctx.should_run_visvoro):
+            for key in self.ctx.components.keys():
+                zeopp_label = "zeopp_{}".format(key)
+                if all(self.ctx.should_run_visvoro):
+                    if 'voro_accessible' in self.ctx[zeopp_label].outputs:
+                        voro_accessible[key] = self.ctx[zeopp_label].outputs.voro_accessible
+            self.out('voro_accessible', voro_accessible)
 
         if all(self.ctx.should_run_comp) or all(self.ctx.should_run_pld):
             all_outputs['pm_out'] = self.ctx.pm_ev.outputs.output_parameters
