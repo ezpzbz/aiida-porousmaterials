@@ -273,18 +273,18 @@ class VoronoiEnergyWorkChain(WorkChain):
                 zeopp_label = "zeopp_{}".format(key)
                 voro_label = "{}_{}".format(self.ctx.label, key)
                 pm_input['acc_voronoi_nodes'][voro_label] = self.ctx[zeopp_label].outputs.voro_accessible
-                pm_input["parameters"] = modify_pm_parameters(
-                    self.inputs.porousmaterials.parameters, Str('ev_vdw_kh_multicomp_pld_template')
-                )
+            pm_input["parameters"] = modify_pm_parameters(
+                self.inputs.porousmaterials.parameters, Str('ev_vdw_kh_multicomp_pld_template')
+            )
 
         if all(self.ctx.should_run_comp) and not all(self.ctx.should_run_pld):
             for key in self.inputs.components.keys():
                 zeopp_label = "zeopp_{}".format(key)
                 voro_label = "{}_{}".format(self.ctx.label, key)
                 pm_input['acc_voronoi_nodes'][voro_label] = self.ctx[zeopp_label].outputs.voro_accessible
-                pm_input["parameters"] = modify_pm_parameters(
-                    self.inputs.porousmaterials.parameters, Str('ev_vdw_kh_multicomp_template')
-                )
+            pm_input["parameters"] = modify_pm_parameters(
+                self.inputs.porousmaterials.parameters, Str('ev_vdw_kh_multicomp_template')
+            )
 
         if not all(self.ctx.should_run_comp) and all(self.ctx.should_run_pld):
             voro_label = "{}_{}".format(self.ctx.label, 'PLD')
