@@ -8,7 +8,7 @@ working_dir = pwd() * "/"
 mkdir(working_dir * "Output")
 
 ljff = LJForceField("$ff", cutoffradius=$cutoff, mixing_rules="$mixing")
-framework = Framework(working_dir * "$framework")
+framework = Framework(working_dir * "$framework", check_charge_neutrality=false)
 rep_factor = replication_factors(framework.box, ljff)
 framework = replicate(framework, rep_factor)
 

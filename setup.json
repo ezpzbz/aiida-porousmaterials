@@ -15,7 +15,7 @@
     "version": "1.0.0a1",
     "setup_requires": ["reentry"],
     "install_requires": [
-        "aiida_core >= 1.0.0b5"
+        "aiida_core >= 1.0.0"
     ],
     "entry_points": {
         "aiida.calculations": [
@@ -23,10 +23,6 @@
         ],
         "aiida.parsers": [
             "porousmaterials = aiida_porousmaterials.parser:PorousMaterialsParser"
-        ],
-        "aiida.workflows": [
-            "porousmaterials.base = aiida_porousmaterials.workchains:PorousMaterialsBaseWorkChain",
-            "aiida_porousmaterials.workflows.voronoi_energy=aiida_porousmaterials.workflows.voronoi_energy:VoronoiEnergyWorkChain"
         ]
     },
     "reentry_register": true,

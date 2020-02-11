@@ -2,3 +2,10 @@
 *.pyc
 __pycache__
 *.egg-info
+*.pdf
+*.png
+*.cif
+*.csv
+simulation*
+*.txt
+*.sh
