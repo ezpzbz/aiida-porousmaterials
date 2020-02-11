@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/201230518.svg)](https://zenodo.org/badge/latestdoi/201230518)
+
 # aiida-porousmaterials
 [AiiDA](www.aiida.net) plugin for [PorousMaterials](https://github.com/SimonEnsemble/PorousMaterials.jl) package
 
