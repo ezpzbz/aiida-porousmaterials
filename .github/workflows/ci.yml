@@ -46,6 +46,10 @@ jobs:
     - name: Run pytest
       run:
         pytest
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_PM }}
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 15
