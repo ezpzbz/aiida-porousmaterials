@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 """Basic PorousMaterials parser."""
-from __future__ import absolute_import
 import pandas as pd
 
 

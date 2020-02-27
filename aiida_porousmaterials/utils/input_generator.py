@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 """Basic PorousMaterials input generator."""
-from __future__ import absolute_import
 import os
 from string import Template
 from copy import deepcopy

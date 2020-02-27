@@ -1,31 +1,23 @@
-# # Install pre-commit hooks via
-# pre-commit install
+repos:
 
-# modernizer: make sure our code-base is Python 3 ready
-- repo: https://github.com/python-modernize/python-modernize.git
-  sha: a234ce4e185cf77a55632888f1811d83b4ad9ef2
+- repo: git://github.com/pre-commit/mirrors-yapf
+  rev: v0.28.0
   hooks:
-  - id: python-modernize
-    exclude: ^docs/
-    args:
-      - --write
-      - --nobackups
-      - --nofix=dict_six
+  - id: yapf
+    language: system
+
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v0.740
+  hooks:
+  - id: mypy
+    exclude: '^(docs/)|(examples/)'
 
 - repo: local
   hooks:
-  # yapf = yet another python formatter
-  - id: yapf
-    name: yapf
-    entry: yapf
-    language: system
-    types: [python]
-    args: ["-i"]
 
-  # prospector: collection of linters
   - id: prospector
-    language: system
-    types: [file, python]
     name: prospector
-    description: "This hook runs Prospector: https://github.com/landscapeio/prospector"
     entry: prospector
+    types: [file, python]
+    language: system
+    exclude: '^(docs/)|(examples/)'

@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
 """ Sample run script for PorousMaterials Plugin"""
-from __future__ import print_function
-from __future__ import absolute_import
 import os
 import sys
 import click
@@ -15,6 +12,7 @@ from aiida_porousmaterials.calculations import PorousMaterialsCalculation
 # Reading the structure and convert it to structure data.
 SinglefileData = DataFactory('singlefile')  # pylint: disable=invalid-name
 CifData = DataFactory('cif')  # pylint: disable=invalid-name
+
 
 def example_ev(julia_code, submit=True):
     """
@@ -76,6 +74,7 @@ def example_ev(julia_code, submit=True):
         print("In order to actually submit, add '--submit'")
     print("-----------")
 
+
 @click.command('cli')
 @click.argument('codelabel')
 @click.option('--submit', is_flag=True, help='Actually submit calculation')
@@ -87,6 +86,7 @@ def cli(codelabel, submit):
         print("The code '{}' does not exist".format(codelabel))
         sys.exit(1)
     example_ev(code, submit)
+
 
 if __name__ == '__main__':
     main()  # pylint: disable=no-value-for-parameter

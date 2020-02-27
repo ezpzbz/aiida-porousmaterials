@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 """ PorousMaterials Calculation Plugin """
-from __future__ import absolute_import
 import os
 import six
 
