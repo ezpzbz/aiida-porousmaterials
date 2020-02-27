@@ -57,9 +57,6 @@ def example_ev(julia_code, submit=True):
         res, pk = run_get_pk(builder)
         print(res)
         print("calculation pk: ", pk)
-        # TODO: Getting and showing results. 
-        # print("Average number of methane molecules/uc:",
-        #       res['output_parameters'].dict.tcc1rs['components']['methane']['loading_absolute_average'])
         print("OK, calculation has completed successfully")
         pytest.base_calc_pk = pk
     else:
