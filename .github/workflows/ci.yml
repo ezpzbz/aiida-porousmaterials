@@ -45,7 +45,7 @@ jobs:
         reentry scan -r aiida
     - name: Run pytest
       run:
-        pytest
+        pytest --cov-report xml
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.0.1
       with:
