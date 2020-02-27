@@ -20,8 +20,8 @@ def example_ev(julia_code, submit=True):
     """
 
     pwd = os.path.dirname(os.path.realpath(__file__))
-    framework = CifData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cif')).store()
-    acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.voro_accessible')).store()
+    framework = CifData(file=os.path.join(pwd, 'files', 'HKUST1.cif')).store()
+    acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'HKUST1.voro_accessible')).store()
 
     parameters = Dict(
         dict={

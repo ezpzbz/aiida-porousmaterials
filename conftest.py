@@ -7,4 +7,4 @@ pytest_plugins = ['aiida.manage.tests.pytest_fixtures']  # pylint: disable=inval
 
 @pytest.fixture(scope='function')
 def julia_code(aiida_local_code_factory):  # pylint: disable=unused-argument
-    return aiida_local_code_factory("julia","julia")
+    return aiida_local_code_factory("julia", "julia")
