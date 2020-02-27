@@ -43,7 +43,7 @@ def example_ev(julia_code, submit=True):
     builder.structure = {framework.filename[:-4]: framework}
     builder.parameters = parameters
     builder.acc_voronoi_nodes = {framework.filename[:-4]: acc_voronoi_nodes}
-    builder.code = code
+    builder.code = julia_code
     builder.metadata.options.resources = { #pylint: disable = no-member
         "num_machines": 1,
         "num_mpiprocs_per_machine": 1,
