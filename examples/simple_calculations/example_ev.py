@@ -18,11 +18,6 @@ def example_ev(julia_code, submit=True):
     """
     Example to prepare and run a Sinlge Component
     """
-    try:
-        code = Code.get_from_string(codelabel)
-    except NotExistent:
-        print("The code '{}' does not exist".format(codelabel))
-        sys.exit(1)
 
     pwd = os.path.dirname(os.path.realpath(__file__))
     framework = CifData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cif')).store()
@@ -44,7 +39,7 @@ def example_ev(julia_code, submit=True):
         }
     )
 
-    builder = PorousMaterialsCalculation.get_builder()
+    builder = julia_code.get_builder()
     builder.structure = {framework.filename[:-4]: framework}
     builder.parameters = parameters
     builder.acc_voronoi_nodes = {framework.filename[:-4]: acc_voronoi_nodes}
