@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         python-version: [3.6]
-        julia-version: ['1.0.4']
         backend: ['django']
     steps:
     - uses: actions/checkout@v1
@@ -42,8 +41,11 @@ jobs:
     - name: Install python dependencies
       run: |
         pip install --upgrade pip
-        pip install -e .
+        pip install -e .[test]
         reentry scan -r aiida
+    - name: Run pytest
+      run:
+        pytest
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 15
