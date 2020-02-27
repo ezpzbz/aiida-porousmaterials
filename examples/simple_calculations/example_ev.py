@@ -39,7 +39,7 @@ def example_ev(julia_code, submit=True):
         }
     )
 
-    builder = julia_code.get_builder()
+    builder = PorousMaterialsCalculation.get_builder()
     builder.structure = {framework.filename[:-4]: framework}
     builder.parameters = parameters
     builder.acc_voronoi_nodes = {framework.filename[:-4]: acc_voronoi_nodes}
