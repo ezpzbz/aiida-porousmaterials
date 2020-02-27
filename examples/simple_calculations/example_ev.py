@@ -2,11 +2,12 @@
 import os
 import sys
 import click
+import pytest
 
 from aiida.common import NotExistent
 from aiida.orm import Code, Dict
 from aiida.plugins import DataFactory
-from aiida.engine import run
+from aiida.engine import run, run_get_pk
 from aiida_porousmaterials.calculations import PorousMaterialsCalculation
 
 # Reading the structure and convert it to structure data.
@@ -54,8 +55,9 @@ def example_ev(julia_code, submit=True):
     if submit:
         print("Testing PorousMaterials with simple input...")
         res, pk = run_get_pk(builder)
+        print(res)
         print("calculation pk: ", pk)
-        # TODO: Getting and showing results.
+        # TODO: Getting and showing results. 
         # print("Average number of methane molecules/uc:",
         #       res['output_parameters'].dict.tcc1rs['components']['methane']['loading_absolute_average'])
         print("OK, calculation has completed successfully")
@@ -84,6 +86,6 @@ def cli(codelabel, submit):
 
 
 if __name__ == '__main__':
-    main()  # pylint: disable=no-value-for-parameter
+    cli()  # pylint: disable=no-value-for-parameter
 
 # EOF
