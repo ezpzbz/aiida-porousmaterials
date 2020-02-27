@@ -8,3 +8,4 @@ simulation*
 *.txt
 *.sh
 *.tar
+.vscode
