@@ -50,7 +50,8 @@ jobs:
       uses: coverallsapp/github-action@v1.0.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./coverage/lcov.info
+      run:
+        coveralls
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 15
