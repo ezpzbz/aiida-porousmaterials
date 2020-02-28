@@ -19,7 +19,7 @@
     "setup_requires": ["reentry"],
     "install_requires": [
         "aiida_core[atomic_tools] >= 1.0.0, <2.0.0",
-        "pandas==0.25.1"
+        "pandas"
     ],
     "entry_points": {
         "aiida.calculations": [

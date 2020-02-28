@@ -37,7 +37,9 @@ jobs:
         sudo apt install postgresql postgresql-server-dev-all postgresql-client rabbitmq-server graphviz
         sudo systemctl status rabbitmq-server.service
     - name: Install PorousMaterials
-      run: julia -e 'using Pkg; Pkg.add("PorousMaterials")'
+      run: |
+        julia --version  
+        julia -e 'using Pkg; Pkg.add("PorousMaterials")'
     - name: Install python dependencies
       run: |
         pip install --upgrade pip
