@@ -14,10 +14,10 @@ from aiida_porousmaterials.calculations import PorousMaterialsCalculation
 SinglefileData = DataFactory('singlefile')  # pylint: disable=invalid-name
 CifData = DataFactory('cif')  # pylint: disable=invalid-name
 
-
 # Creating the command prompt input options using click
 
-def example_ev_kh_multi_pld(julia_code, submit):
+
+def example_ev_kh_multi_pld(julia_code, submit=True):
     """
     Test for Multi Comp PLD based with Kh
     """
@@ -79,6 +79,7 @@ def example_ev_kh_multi_pld(julia_code, submit):
         print("submission test successful")
         print("In order to actually submit, add '--submit'")
 
+
 @click.command('cli')
 @click.argument('codelabel')
 @click.option('--submit', is_flag=True, help='If true, actually submits the clac to the daemon.')
@@ -90,6 +91,7 @@ def cli(codelabel, submit):
         print("The code '{}' does not exist".format(codelabel))
         sys.exit(1)
     example_ev_kh_multi_pld(code, submit)
+
 
 if __name__ == '__main__':
     cli()  # pylint: disable=no-value-for-parameter
