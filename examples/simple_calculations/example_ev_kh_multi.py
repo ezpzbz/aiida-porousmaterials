@@ -24,10 +24,12 @@ def example_ev_kh_multi(julia_code, submit=True):
 
     framework = CifData(file=os.path.join(pwd, 'files', 'HKUST1.cif')).store()
 
-    acc_voronoi_nodes_xe = SinglefileData(file=os.path.join(pwd, 'files', 'xenon_voro', 'HKUST1.voro_accessible')
-                                         ).store()
-    acc_voronoi_nodes_kr = SinglefileData(file=os.path.join(pwd, 'files', 'krypton_voro', 'HKUST1.voro_accessible')
-                                         ).store()
+    acc_voronoi_nodes_xe = SinglefileData(
+        file=os.path.join(pwd, 'files', 'xenon_probe', 'out.visVoro.voro_accessible')
+    ).store()
+    acc_voronoi_nodes_kr = SinglefileData(
+        file=os.path.join(pwd, 'files', 'krypton_probe', 'out.visVoro.voro_accessible')
+    ).store()
 
     parameters = Dict(
         dict={
