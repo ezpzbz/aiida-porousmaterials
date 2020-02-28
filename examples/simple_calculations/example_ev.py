@@ -2,11 +2,12 @@
 import os
 import sys
 import click
+import pytest
 
 from aiida.common import NotExistent
 from aiida.orm import Code, Dict
 from aiida.plugins import DataFactory
-from aiida.engine import run
+from aiida.engine import run, run_get_pk
 from aiida_porousmaterials.calculations import PorousMaterialsCalculation
 
 # Reading the structure and convert it to structure data.
@@ -14,23 +15,14 @@ SinglefileData = DataFactory('singlefile')  # pylint: disable=invalid-name
 CifData = DataFactory('cif')  # pylint: disable=invalid-name
 
 
-# Creating the command prompt input options using click
-@click.command('cli')
-@click.argument('codelabel')
-@click.option('--submit', is_flag=True, help='If true, actually submits the clac to the daemon.')
-def main(codelabel, submit):
+def example_ev(julia_code, submit=True):
     """
-    Example to run Sinlge Component
+    Example to prepare and run a Sinlge Component
     """
-    try:
-        code = Code.get_from_string(codelabel)
-    except NotExistent:
-        print("The code '{}' does not exist".format(codelabel))
-        sys.exit(1)
 
     pwd = os.path.dirname(os.path.realpath(__file__))
-    framework = CifData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.cif')).store()
-    acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'FIQCEN_clean.voro_accessible')).store()
+    framework = CifData(file=os.path.join(pwd, 'files', 'HKUST1.cif')).store()
+    acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'HKUST1.voro_accessible')).store()
 
     parameters = Dict(
         dict={
@@ -52,7 +44,7 @@ def main(codelabel, submit):
     builder.structure = {framework.filename[:-4]: framework}
     builder.parameters = parameters
     builder.acc_voronoi_nodes = {framework.filename[:-4]: acc_voronoi_nodes}
-    builder.code = code
+    builder.code = julia_code
     builder.metadata.options.resources = { #pylint: disable = no-member
         "num_machines": 1,
         "num_mpiprocs_per_machine": 1,
@@ -61,16 +53,36 @@ def main(codelabel, submit):
     builder.metadata.options.withmpi = False  #pylint: disable = no-member
 
     if submit:
-        run(builder)
+        print("Testing PorousMaterials with simple input...")
+        res, pk = run_get_pk(builder)
+        print(res)
+        print("calculation pk: ", pk)
+        print("OK, calculation has completed successfully")
+        pytest.base_calc_pk = pk
     else:
+        print("Generating test input ...")
         builder.metadata.dry_run = True  #pylint: disable = no-member
         builder.metadata.store_provenance = False  #pylint: disable = no-member
         run(builder)
         print("submission test successful")
         print("In order to actually submit, add '--submit'")
+    print("-----------")
+
+
+@click.command('cli')
+@click.argument('codelabel')
+@click.option('--submit', is_flag=True, help='Actually submit calculation')
+def cli(codelabel, submit):
+    """Click interface"""
+    try:
+        code = Code.get_from_string(codelabel)
+    except NotExistent:
+        print("The code '{}' does not exist".format(codelabel))
+        sys.exit(1)
+    example_ev(code, submit)
 
 
 if __name__ == '__main__':
-    main()  # pylint: disable=no-value-for-parameter
+    cli()  # pylint: disable=no-value-for-parameter
 
-    # EOF
+# EOF

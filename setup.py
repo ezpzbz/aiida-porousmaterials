@@ -1,11 +1,8 @@
-#!/usr/bin/env python
 """
 AiiDA-Plugin
 """
-from __future__ import print_function
-from __future__ import absolute_import
 import json
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 if __name__ == '__main__':
     # Provide static information in setup.json

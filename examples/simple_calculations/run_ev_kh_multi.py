@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
 """ Sample run script for PorousMaterials Plugin"""
-from __future__ import print_function
-from __future__ import absolute_import
 import os
 import sys
 import click
