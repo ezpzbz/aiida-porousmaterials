@@ -2,11 +2,12 @@
 import os
 import sys
 import click
+import pytest
 
 from aiida.common import NotExistent
 from aiida.orm import Code, Dict
 from aiida.plugins import DataFactory
-from aiida.engine import run
+from aiida.engine import run, run_get_pk
 from aiida_porousmaterials.calculations import PorousMaterialsCalculation
 
 # Reading the structure and convert it to structure data.
@@ -15,26 +16,23 @@ CifData = DataFactory('cif')  # pylint: disable=invalid-name
 
 
 # Creating the command prompt input options using click
-@click.command('cli')
-@click.argument('codelabel')
-@click.option('--submit', is_flag=True, help='If true, actually submits the clac to the daemon.')
-def main(codelabel, submit):
-    """hhghghghg
-    """
-    try:
-        code = Code.get_from_string(codelabel)
-    except NotExistent:
-        print("The code '{}' does not exist".format(codelabel))
-        sys.exit(1)
 
+def example_ev_kh_multi_pld(julia_code, submit):
+    """
+    Test for Multi Comp PLD based with Kh
+    """
     pwd = os.path.dirname(os.path.realpath(__file__))
 
     framework = CifData(file=os.path.join(pwd, 'files', 'HKUST1.cif')).store()
 
-    acc_voronoi_nodes_xe = SinglefileData(file=os.path.join(pwd, 'files', 'xenon_voro', 'HKUST1.voro_accessible')
-                                         ).store()
-    acc_voronoi_nodes_kr = SinglefileData(file=os.path.join(pwd, 'files', 'krypton_voro', 'HKUST1.voro_accessible')
-                                         ).store()
+    acc_voronoi_nodes_xe = SinglefileData(
+        file=os.path.join(pwd, 'files', 'xenon_probe', 'out.visVoro.voro_accessible')
+    ).store()
+    acc_voronoi_nodes_kr = SinglefileData(
+        file=os.path.join(pwd, 'files', 'krypton_probe', 'out.visVoro.voro_accessible')
+    ).store()
+    acc_voronoi_nodes_pld = SinglefileData(file=os.path.join(pwd, 'files', 'pld_probe', 'out.visVoro.voro_accessible')
+                                          ).store()
 
     parameters = Dict(
         dict={
@@ -52,6 +50,7 @@ def main(codelabel, submit):
     )
     voro_label_xe = framework.filename[:-4] + "_Xe"
     voro_label_kr = framework.filename[:-4] + "_Kr"
+    voro_label_pld = framework.filename[:-4] + "_PLD"
 
     builder = PorousMaterialsCalculation.get_builder()
     builder.structure = {framework.filename[:-4]: framework}
@@ -59,8 +58,9 @@ def main(codelabel, submit):
     builder.acc_voronoi_nodes = {
         voro_label_xe: acc_voronoi_nodes_xe,
         voro_label_kr: acc_voronoi_nodes_kr,
+        voro_label_pld: acc_voronoi_nodes_pld,
     }
-    builder.code = code
+    builder.code = julia_code
     builder.metadata.options.resources = { #pylint: disable = no-member
         "num_machines": 1,
         "num_mpiprocs_per_machine": 1,
@@ -69,7 +69,9 @@ def main(codelabel, submit):
     builder.metadata.options.withmpi = False  #pylint: disable = no-member
 
     if submit:
-        run(builder)
+        res, pk = run_get_pk(builder)
+        pytest.base_calc_pk = pk
+        print(res)
     else:
         builder.metadata.dry_run = True  #pylint: disable = no-member
         builder.metadata.store_provenance = False  #pylint: disable = no-member
@@ -77,7 +79,18 @@ def main(codelabel, submit):
         print("submission test successful")
         print("In order to actually submit, add '--submit'")
 
+@click.command('cli')
+@click.argument('codelabel')
+@click.option('--submit', is_flag=True, help='If true, actually submits the clac to the daemon.')
+def cli(codelabel, submit):
+    """Click interface"""
+    try:
+        code = Code.get_from_string(codelabel)
+    except NotExistent:
+        print("The code '{}' does not exist".format(codelabel))
+        sys.exit(1)
+    example_ev_kh_multi_pld(code, submit)
 
 if __name__ == '__main__':
-    main()  # pylint: disable=no-value-for-parameter
+    cli()  # pylint: disable=no-value-for-parameter
 # EOF
