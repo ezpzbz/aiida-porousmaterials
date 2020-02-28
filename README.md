@@ -1,7 +1,8 @@
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pzarabadip/aiida-porousmaterials/blob/master/LICENSE)
-![](https://github.com/pzarabadip/aiida-porousmaterials/workflows/Build/badge.svg)
+[![GitHub license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/pzarabadip/aiida-porousmaterials/blob/master/LICENSE)
+[![Actions Status](https://github.com/pzarabadip/aiida-porousmaterials/workflows/Build/badge.svg)](https://github.com/pzarabadip/aiida-porousmaterials/actions)
 [![codecov](https://codecov.io/gh/pzarabadip/aiida-porousmaterials/branch/github-actions/graph/badge.svg)](https://codecov.io/gh/pzarabadip/aiida-porousmaterials)
 [![DOI](https://zenodo.org/badge/201230518.svg)](https://zenodo.org/badge/latestdoi/201230518)
+
 
 # aiida-porousmaterials
 [AiiDA](www.aiida.net) plugin for [PorousMaterials](https://github.com/SimonEnsemble/PorousMaterials.jl) package
