@@ -6,7 +6,6 @@
     "url": "https://github.com/pzarabadip/aiida-porousmaterials",
     "license": "MIT",
     "classifiers": [
-        "Development Status :: 2 - Alpha",
         "Environment :: Plugins",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
