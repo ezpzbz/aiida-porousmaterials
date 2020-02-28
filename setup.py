@@ -1,5 +1,5 @@
 """
-AiiDA-Plugin
+AiiDA-PorousMaterials Plugin
 """
 import json
 from setuptools import find_packages, setup

@@ -6,13 +6,16 @@
     "url": "https://github.com/pzarabadip/aiida-porousmaterials",
     "license": "MIT",
     "classifiers": [
-        "Programming Language :: Python",
+        "Development Status :: 2 - Alpha",
+        "Environment :: Plugins",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
-        "Natural Language :: English",
         "Framework :: AiiDA"
     ],
-    "version": "1.0.0a1",
+    "version": "1.0.0a2",
     "setup_requires": ["reentry"],
     "install_requires": [
         "aiida_core[atomic_tools] >= 1.0.0, <2.0.0",
@@ -34,8 +37,7 @@
       "test": [
             "pgtest==1.2.0",
             "pytest>=4.4,<5.0.0",
-            "pytest-cov>=2.6.1,<3.0.0",
-            "coverage"
+            "pytest-cov>=2.6.1,<3.0.0"
       ],
 	    "pre-commit": [
 		    "pre-commit==1.18.3",
