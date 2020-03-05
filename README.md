@@ -1,6 +1,6 @@
 
 [![Actions Status](https://github.com/pzarabadip/aiida-porousmaterials/workflows/Build/badge.svg)](https://github.com/pzarabadip/aiida-porousmaterials/actions)
-[![codecov](https://codecov.io/gh/pzarabadip/aiida-porousmaterials/branch/github-actions/graph/badge.svg)](https://codecov.io/gh/pzarabadip/aiida-porousmaterials)
+[![codecov](https://codecov.io/gh/pzarabadip/aiida-porousmaterials/branch/master/graph/badge.svg)](https://codecov.io/gh/pzarabadip/aiida-porousmaterials)
 
 [![PyPI version](https://badge.fury.io/py/aiida-porousmaterials.svg)](https://badge.fury.io/py/aiida-porousmaterials)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/aiida-porousmaterials.svg)](https://pypi.python.org/pypi/aiida-porousmaterials/)
