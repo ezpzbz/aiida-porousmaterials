@@ -24,6 +24,7 @@ def example_ev(julia_code, submit=True):
     framework = CifData(file=os.path.join(pwd, 'files', 'HKUST1.cif')).store()
     acc_voronoi_nodes = SinglefileData(file=os.path.join(pwd, 'files', 'HKUST1.voro_accessible')).store()
     data_path = os.path.join(pwd, 'data')
+    print(data_path)
     parameters = Dict(
         dict={
             'data_path': data_path,
