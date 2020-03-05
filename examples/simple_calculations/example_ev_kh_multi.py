@@ -45,8 +45,8 @@ def example_ev_kh_multi(julia_code, submit=True):
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
-    voro_label_xe = framework.filename[:-4] + '_Xe'
-    voro_label_kr = framework.filename[:-4] + '_Kr'
+    voro_label_xe = framework.filename[:-4] + "_Xe"
+    voro_label_kr = framework.filename[:-4] + "_Kr"
 
     builder = PorousMaterialsCalculation.get_builder()
     builder.structure = {framework.filename[:-4]: framework}

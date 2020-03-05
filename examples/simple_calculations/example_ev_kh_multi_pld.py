@@ -48,9 +48,9 @@ def example_ev_kh_multi_pld(julia_code, submit=True):
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
-    voro_label_xe = framework.filename[:-4] + '_Xe'
-    voro_label_kr = framework.filename[:-4] + '_Kr'
-    voro_label_pld = framework.filename[:-4] + '_PLD'
+    voro_label_xe = framework.filename[:-4] + "_Xe"
+    voro_label_kr = framework.filename[:-4] + "_Kr"
+    voro_label_pld = framework.filename[:-4] + "_PLD"
 
     builder = PorousMaterialsCalculation.get_builder()
     builder.structure = {framework.filename[:-4]: framework}

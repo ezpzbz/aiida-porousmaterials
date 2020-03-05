@@ -32,9 +32,9 @@ def example_ev(julia_code, submit=True):
             'mixing': 'Lorentz-Berthelot',
             'framework': framework.filename,
             'frameworkname': framework.filename[:-4],
-            'adsorbate': 'Xe',
+            'adsorbate': "Xe",
             'temperature': 298.0,
-            'output_filename': 'Ev_' + framework.filename[:-4] + '.csv',
+            'output_filename': "Ev_" + framework.filename[:-4] + ".csv",
             'input_template': 'ev_vdw_kh_1comp_template',
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
