@@ -30,10 +30,10 @@ def example_ev_kh_multi(julia_code, submit=True):
     acc_voronoi_nodes_kr = SinglefileData(
         file=os.path.join(pwd, 'files', 'krypton_probe', 'out.visVoro.voro_accessible')
     ).store()
-
+    data_path = os.path.join(pwd, 'data')
     parameters = Dict(
         dict={
-            'data_path': "/storage/brno9-ceitec/home/pezhman/projects/noble_gas_epfl/xe_kr/data",
+            'data_path': data_path,
             'ff': 'UFF.csv',
             'cutoff': 12.5,
             'mixing': 'Lorentz-Berthelot',
@@ -45,8 +45,8 @@ def example_ev_kh_multi(julia_code, submit=True):
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
-    voro_label_xe = framework.filename[:-4] + "_Xe"
-    voro_label_kr = framework.filename[:-4] + "_Kr"
+    voro_label_xe = framework.filename[:-4] + '_Xe'
+    voro_label_kr = framework.filename[:-4] + '_Kr'
 
     builder = PorousMaterialsCalculation.get_builder()
     builder.structure = {framework.filename[:-4]: framework}
@@ -57,21 +57,25 @@ def example_ev_kh_multi(julia_code, submit=True):
     }
     builder.code = julia_code
     builder.metadata.options.resources = { #pylint: disable = no-member
-        "num_machines": 1,
-        "num_mpiprocs_per_machine": 1,
+        'num_machines': 1,
+        'num_mpiprocs_per_machine': 1,
     }
     builder.metadata.options.max_wallclock_seconds = 1 * 30 * 60  #pylint: disable = no-member
     builder.metadata.options.withmpi = False  #pylint: disable = no-member
 
     if submit:
+        print('Testing PorousMaterials Ev for multi-component...')
         res, pk = run_get_pk(builder)
+        print('Ev Xe is: ', res['output_parameters'].dict.Xe['Xe_probe']['Ev_minimum'])
+        print('Ev Kr is: ', res['output_parameters'].dict.Kr['Kr_probe']['Ev_minimum'])
+        print('calculation pk: ', pk)
+        print('OK, calculation has completed successfully')
         pytest.base_calc_pk = pk
-        print(res)
     else:
         builder.metadata.dry_run = True  #pylint: disable = no-member
         builder.metadata.store_provenance = False  #pylint: disable = no-member
         run(builder)
-        print("submission test successful")
+        print('submission test successful')
         print("In order to actually submit, add '--submit'")
 
 

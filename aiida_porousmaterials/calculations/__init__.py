@@ -81,7 +81,7 @@ class PorousMaterialsCalculation(CalcJob):
         # Writing the input
         inp = PorousMaterialsInput(parameters)
 
-        with open(folder.get_abs_path(self.INPUT_FILE), "w") as fobj:
+        with open(folder.get_abs_path(self.INPUT_FILE), 'w') as fobj:
             fobj.write(inp.render())
 
         # create code information
