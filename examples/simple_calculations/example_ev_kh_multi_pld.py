@@ -33,10 +33,10 @@ def example_ev_kh_multi_pld(julia_code, submit=True):
     ).store()
     acc_voronoi_nodes_pld = SinglefileData(file=os.path.join(pwd, 'files', 'pld_probe', 'out.visVoro.voro_accessible')
                                           ).store()
-
+    data_path = os.path.join(pwd, 'data')
     parameters = Dict(
         dict={
-            'data_path': "/storage/brno9-ceitec/home/pezhman/projects/noble_gas_epfl/xe_kr/data",
+            'data_path': data_path,
             'ff': 'UFF.csv',
             'cutoff': 12.5,
             'mixing': 'Lorentz-Berthelot',
@@ -44,7 +44,7 @@ def example_ev_kh_multi_pld(julia_code, submit=True):
             'frameworkname': framework.filename[:-4],
             'adsorbates': '["Xe","Kr"]',
             'temperature': 298.0,
-            'input_template': 'ev_vdw_kh_multicomp_template',
+            'input_template': 'ev_vdw_kh_multicomp_pld_template',
             'ev_setting': [99, 95, 90, 80, 50],  # if not defined the default is [90,80,50]
         }
     )
@@ -62,21 +62,27 @@ def example_ev_kh_multi_pld(julia_code, submit=True):
     }
     builder.code = julia_code
     builder.metadata.options.resources = { #pylint: disable = no-member
-        "num_machines": 1,
-        "num_mpiprocs_per_machine": 1,
+        'num_machines': 1,
+        'num_mpiprocs_per_machine': 1,
     }
     builder.metadata.options.max_wallclock_seconds = 1 * 30 * 60  #pylint: disable = no-member
     builder.metadata.options.withmpi = False  #pylint: disable = no-member
 
     if submit:
+        print('Testing PorousMaterials Ev for multi-component PLD probe...')
         res, pk = run_get_pk(builder)
+        print('Ev Xe is: ', res['output_parameters'].dict.Xe['Xe_probe']['Ev_minimum'])
+        print('Ev Kr is: ', res['output_parameters'].dict.Kr['Kr_probe']['Ev_minimum'])
+        print('Ev Xe PLD is: ', res['output_parameters'].dict.Xe['PLD_probe']['Ev_minimum'])
+        print('Ev Kr PLD is: ', res['output_parameters'].dict.Kr['PLD_probe']['Ev_minimum'])
+        print('calculation pk: ', pk)
+        print('OK, calculation has completed successfully')
         pytest.base_calc_pk = pk
-        print(res)
     else:
         builder.metadata.dry_run = True  #pylint: disable = no-member
         builder.metadata.store_provenance = False  #pylint: disable = no-member
         run(builder)
-        print("submission test successful")
+        print('submission test successful')
         print("In order to actually submit, add '--submit'")
 
 

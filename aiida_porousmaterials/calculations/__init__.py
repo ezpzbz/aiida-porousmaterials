@@ -73,15 +73,17 @@ class PorousMaterialsCalculation(CalcJob):
         parameters = self.inputs.parameters.get_dict()
 
         # get settings
-        if 'setting' in self.inputs:
-            settings = self.inputs.settings.get_dict()
-        else:
-            settings = {}
+        settings = self.inputs.settings.get_dict() if 'setting' in self.inputs else {}
+
+        # if 'setting' in self.inputs:
+        #     settings = self.inputs.settings.get_dict()
+        # else:
+        #     settings = {}
 
         # Writing the input
         inp = PorousMaterialsInput(parameters)
 
-        with open(folder.get_abs_path(self.INPUT_FILE), "w") as fobj:
+        with open(folder.get_abs_path(self.INPUT_FILE), 'w') as fobj:
             fobj.write(inp.render())
 
         # create code information

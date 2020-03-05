@@ -41,14 +41,14 @@ class PorousMaterialsParser(Parser):
                 fname
             )
             ev_output_file[fname[:-4]] = SinglefileData(file=output_abs_path)
-            dict_key1 = fname[:-4].split("_")[-1]
-            dict_key2 = fname[:-4].split("_")[-2]
+            dict_key1 = fname[:-4].split('_')[-1]
+            dict_key2 = fname[:-4].split('_')[-2]
             if dict_key1 not in output_parameters.keys():
                 output_parameters[dict_key1] = {}
-            output_parameters[dict_key1][dict_key2 + "_probe"] = parse_base_output(output_abs_path)
+            output_parameters[dict_key1][dict_key2 + '_probe'] = parse_base_output(output_abs_path)
 
-        self.out("ev_output_file", ev_output_file)
-        self.out("output_parameters", Dict(dict=output_parameters))
+        self.out('ev_output_file', ev_output_file)
+        self.out('output_parameters', Dict(dict=output_parameters))
 
         return ExitCode(0)
 
